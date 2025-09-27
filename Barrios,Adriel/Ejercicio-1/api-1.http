@@ -1,0 +1,13 @@
+@url = http://localhost:1234
+
+### POST
+POST {{url}}/base-altura
+Content-Type: application/json
+
+{
+    "base": 3,  
+    "altura": 3
+}
+
+### GET
+GET {{url}}/muestra
