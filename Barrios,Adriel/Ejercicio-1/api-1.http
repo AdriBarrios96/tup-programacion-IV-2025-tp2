@@ -5,9 +5,22 @@ POST {{url}}/base-altura
 Content-Type: application/json
 
 {
-    "base": 3,  
-    "altura": 3
+    "base": 27,  
+    "altura": 14
 }
 
 ### GET
+GET {{url}}/muestra
+
+### PUT (Modificar un Rectángulo)
+# Reemplaza el :id con un ID existente en la base de datos
+PUT {{url}}/base-altura/1
+Content-Type: application/json
+
+{
+    "base": 20.5, 
+    "altura": 5.0
+}
+
+### GET (Verificar el cambio)
 GET {{url}}/muestra

@@ -17,25 +17,25 @@ const dbConfig = {
     database: 'db-prog4' 
 };
 
-// Función para obtener la conexión
+// Funcion para obtener la conexión
 const getConnection = async () => {
     try {
         const connection = await mysql.createConnection(dbConfig);
         return connection;
     } catch (error) {
-        console.error("Error al conectar a la base de datos:", error.message);
+        console.error("Error al conectarte a la base de datos:", error.message);
         throw error; 
     }
 };
 
-// MIDDLEWARE DE VALIDACIÓN CON EXPRESS-VALIDATOR
+//VALIDACIÓN CON EXPRESS-VALIDATOR
 const reglasValidacion = [
     check('base')
-        // isFloat verifica que sea un número flotante y sea mayor a cero.
-        .isFloat({ gt: 0 }).withMessage('La base debe ser un número decimal positivo y mayor a 0.'),
+        // isFloat verifica que el numero sea flotante y mayor a cero.
+        .isFloat({ gt: 0 }).withMessage('La base debe ser positiva y mayor a 0.'),
 
     check('altura')
-        .isFloat({ gt: 0 }).withMessage('La altura debe ser un número decimal positivo y mayor a 0.')
+        .isFloat({ gt: 0 }).withMessage('La altura debe ser positiva y mayor a 0.')
 ];
 
 // Verificamos si las reglas funcionan
@@ -45,7 +45,7 @@ const manejarErrores = (req, res, next) => {
     if (!errors.isEmpty()) {
         // Si hay errores, devolvemos un 400
         return res.status(400).json({ 
-            mensaje: 'Error de validación en los datos de entrada.',
+            mensaje: 'Error en los datos de entrada.',
             errores: errors.array() 
         });
     }
@@ -53,14 +53,14 @@ const manejarErrores = (req, res, next) => {
     next();
 };
 
-// POST, Creamos un nuevo rectángulo y lo guardamos en la BD
+// POST -- Creamos un nuevo rectangulo y lo guardamos en la BD
 app.post(
     "/base-altura", 
-    reglasValidacion, // Ejecutamos las reglas de validación
+    reglasValidacion, // Ejecutamos las reglas de validacion
     manejarErrores,   // Maneja los errores
     async (req, res) => {
     
-    // Validacion exitosa y seguimos
+    // Validacion exitosa, seguimos
     const base = req.body.base;
     const altura = req.body.altura;
 
@@ -78,17 +78,61 @@ app.post(
         const [result] = await connection.execute(sql, values);
         
         res.status(201).json({ 
-            mensaje: "Rectángulo guardado exitosamente.",
+            mensaje: "Rectangulo guardado exitosamente.",
             id: result.insertId
         });
         
     } catch (error) {
-        console.error("Error al insertar el rectángulo:", error);
+        console.error("Error al insertar el rectangulo:", error);
         res.status(500).json({ error: "Ocurrió un error en el servidor al guardar el dato." });
     }
 });
 
-// GET, Traemos todos los rectángulos guardados en la BD
+// PUT -- Modifica un rectangulo por ID (Recibe lados y recalcula)
+app.put("/base-altura/:id", 
+    [
+        ...reglasValidacion, // Reutilizamos la validacion del body (base y altura)
+        // Nueva validación para el ID que viene en la URL (params)
+        check('id').isInt({ gt: 0 }).withMessage('El ID del rectangulo debe ser un numero entero positivo.')
+    ],
+    manejarErrores,
+    async (req, res) => {
+        const { id } = req.params; // el ID que se modifica
+        const { base, altura } = req.body; // nuevos lados
+
+        // Recalculamos perimetro y superficie
+        const perimetro = 2 * (base + altura);
+        const superficie = base * altura;
+
+        let connection;
+        try {
+            connection = await getConnection();
+            
+            // Consulta UPDATE
+            const sql = `UPDATE rectangulos SET lado_base = ?, lado_altura = ?, perimetro = ?, superficie = ? WHERE id = ?`;
+            const values = [base, altura, perimetro, superficie, id];
+
+            const [result] = await connection.execute(sql, values);
+            
+            // Verificamos si se modificó algo
+            if (result.affectedRows === 0) { // Si affectedRows es 0, el ID no existe
+                return res.status(404).json({ mensaje: `Rectangulo con ID ${id} no encontrado/no se realizaron cambios.` });
+            }
+
+            res.status(200).json({ 
+                mensaje: "Rectangulo modificado exitosamente.",
+                id: parseInt(id)
+            });
+            
+        } catch (error) {
+            console.error("Error al actualizar el rectangulo:", error);
+            res.status(500).json({ error: "Ocurrio un error en el servidor al actualizar el dato." });
+        }
+    }
+);
+
+
+// GET -- Traemos todos los rectángulos guardados en la BD
 app.get("/muestra", async (req, res) => {
     let connection;
     try {
@@ -113,5 +157,5 @@ app.get("/muestra", async (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`http://localhost:${port}`)
+  console.log(`La aplicacion funciona en el puerto: ${port}`)
 });
