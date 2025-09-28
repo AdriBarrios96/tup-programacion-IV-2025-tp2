@@ -1,0 +1,18 @@
+{
+  "name": "ejercicio-2",
+  "version": "1.0.0",
+  "description": "Realizar una API con ExpressJS que gestione el listado de alumnos de una materia. Guardar el nombre del alumno y tres notas en un arreglo interno. Verificar en la API al momento de crear/modificar que no se repitan alumnos con el mismo nombre. En el momento de consultar por las notas de un alumno indicar también el promedio y si está reprobado (promedio menor a 6) aprobado (promedio de 6 o 7) o promocionado (promedio de 8 o más). Este dato no debe ser guardado en el arreglo interno.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node --env-file=.env --watch index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0",
+    "express-validator": "^7.2.1",
+    "mysql2": "^3.15.1"
+  }
+}

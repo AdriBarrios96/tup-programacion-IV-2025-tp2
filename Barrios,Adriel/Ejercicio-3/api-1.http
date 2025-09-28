@@ -1,0 +1,107 @@
+@url = http://localhost:1234
+
+# --- 1. CREAR REGISTRO (POST /notas) ---
+
+# REGISTRO 1: Alumno A en Materia 1
+### POST - Registrar Notas (Juan Perez en Prog. IV)
+POST {{url}}/notas
+Content-Type: application/json
+
+{
+    "alumno": "Juan Perez",
+    "id_materia": 1,
+    "nota1": 8.5,
+    "nota2": 7.0,
+    "note3": 9.5
+}
+
+# REGISTRO 2: Alumno B en Materia 2
+### POST - Registrar Notas (Maria Lopez en BBDD)
+POST {{url}}/notas
+Content-Type: application/json
+
+{
+    "alumno": "Maria Lopez",
+    "id_materia": 2,
+    "nota1": 10.0,
+    "nota2": 9.0,
+    "note3": 8.0
+}
+
+# REGISTRO 3: Alumno A en Materia DIFERENTE (Debe pasar)
+### POST - Alumno en otra Materia (Juan Perez en Lab. IV)
+POST {{url}}/notas
+Content-Type: application/json
+
+{
+    "alumno": "Juan Perez",
+    "id_materia": 3,
+    "nota1": 6.0,
+    "nota2": 6.0,
+    "note3": 6.0
+}
+
+# Prueba de UNICIDAD: Intentar Alumno y Materia IGUAL (Debe fallar con 409 Conflict)
+### POST - Intentar registro duplicado
+POST {{url}}/notas
+Content-Type: application/json
+
+{
+    "alumno": "Juan Perez",
+    "id_materia": 1,
+    "nota1": 1.0,
+    "nota2": 1.0,
+    "note3": 1.0
+}
+
+# Prueba de VALIDACIÓN: Datos inválidos (Debe fallar con 400 Bad Request)
+### POST - Datos inválidos
+POST {{url}}/notas
+Content-Type: application/json
+
+{
+    "alumno": "",              
+    "id_materia": 0,           
+    "nota1": 11,               
+    "nota2": "Texto",
+    "note3": 5
+}
+
+
+---
+
+# --- 2. CONSULTAR REGISTROS (GET /notas) ---
+
+### GET - Listado Completo (Muestra nombre de materia y promedio calculado)
+GET {{url}}/notas
+
+
+---
+
+# --- 3. MODIFICAR REGISTRO (PUT /notas/:id) ---
+
+# Modificamos el Registro 1 (Juan P. en Prog. IV). Ajusta el ID si es necesario.
+### PUT - Modificar Notas y Nombre
+PUT {{url}}/notas/1
+Content-Type: application/json
+
+{
+    "alumno": "Juan Carlos Perez",
+    "id_materia": 1,
+    "nota1": 9.0,
+    "nota2": 9.0,
+    "note3": 9.0
+}
+
+# Prueba de UNICIDAD en PUT: Intentar modificar el Registro 2 para que sea igual al Registro 3 (Debe fallar con 409 Conflict)
+### PUT - Conflicto de unicidad
+PUT {{url}}/notas/2
+Content-Type: application/json
+
+{
+    "alumno": "Juan Carlos Perez",
+    "id_materia": 3,
+    "nota1": 10,
+    "nota2": 10,
+    "note3": 10
+}
