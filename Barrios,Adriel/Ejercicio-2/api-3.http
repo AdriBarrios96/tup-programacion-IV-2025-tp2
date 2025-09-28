@@ -1,0 +1,86 @@
+@url = http://localhost:1234
+
+# Tarea 1 - Sin completar
+### POST - Crear tarea sin completar
+POST {{url}}/tareas
+Content-Type: application/json
+
+{
+    "nombre": "Configurar variables de entorno (.env)"
+}
+
+# Tarea 2 - Completada
+### POST - Crear tarea completada
+POST {{url}}/tareas
+Content-Type: application/json
+
+{
+    "nombre": "Diseñar la tabla tareas en MySQL",
+    "completado": true
+}
+
+# Tarea 3 - Sin completar
+### POST - Crear otra tarea sin completar
+POST {{url}}/tareas
+Content-Type: application/json
+
+{
+    "nombre": "Añadir documentación del proyecto"
+}
+
+### POST - Intentar crear tarea duplicada (Debe fallar)
+POST {{url}}/tareas
+Content-Type: application/json
+
+{
+    "nombre": "Añadir documentación del proyecto"
+}
+
+### GET - Listado sin filtros (todas las tareas)
+GET {{url}}/tareas
+
+### GET - Solo las tareas completadas
+GET {{url}}/tareas?estado=completado
+
+### GET - Solo las tareas sin completar
+GET {{url}}/tareas?estado=sin-completar
+
+### GET - Obtener tarea por ID
+GET {{url}}/tareas/1
+
+### GET - ID no existente (Debe fallar con 404 Not Found)
+GET {{url}}/tareas/999
+
+# Tarea 1 estaba sin completar - La marcamos como COMPLETADA y le cambiamos el nombre
+### PUT - Modificar Tarea
+PUT {{url}}/tareas/1
+Content-Type: application/json
+
+{
+    "nombre": "Variables de entorno configuradas",
+    "completada": true
+}
+
+# Tarea 3 estaba sin completar - solo cambiamos el nombre
+### PUT - Modificar solo el nombre
+PUT {{url}}/tareas/3
+Content-Type: application/json
+
+{
+    "nombre": "Actualizar el README.md del proyecto"
+}
+
+# Tarea 2 estaba completada - La marcamos como SIN COMPLETAR
+### PUT - Modificar solo el estado
+PUT {{url}}/tareas/2
+Content-Type: application/json
+
+{
+    "completada": false
+}
+
+### DELETE - Quitar una tarea 
+DELETE {{url}}/tareas/3
+
+### DELETE - ID no existente
+DELETE {{url}}/tareas/333
