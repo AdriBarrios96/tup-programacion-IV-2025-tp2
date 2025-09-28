@@ -1,26 +1,58 @@
 @url = http://localhost:1234
 
-### POST
-POST {{url}}/base-altura
+### POST - Crear Rectángulo
+POST {{url}}/rectangulos/base-altura
 Content-Type: application/json
 
 {
-    "base": 27,  
-    "altura": 14
+    "base": 10.5,
+    "altura": 5.2
 }
 
-### GET
-GET {{url}}/muestra
-
-### PUT (Modificar un Rectángulo)
-# Reemplaza el :id con un ID existente en la base de datos
-PUT {{url}}/base-altura/1
+### POST - Crear Cuadrado
+POST {{url}}/rectangulos/cuadrado
 Content-Type: application/json
 
 {
-    "base": 20.5, 
-    "altura": 5.0
+    "lado": 9.3 
 }
 
-### GET (Verificar el cambio)
-GET {{url}}/muestra
+### POST - Lado Inválido
+POST {{url}}/rectangulos/cuadrado
+Content-Type: application/json
+
+{
+    "lado": -5 
+}
+
+### POST - Datos Inválidos
+POST {{url}}/rectangulos/base-altura
+Content-Type: application/json
+
+{
+    "base": -5,
+    "altura": 10
+}
+
+# ---  MODIFICAR RECTÁNGULO ---
+
+### PUT - Modificar Rectángulo
+PUT {{url}}/rectangulos/base-altura/1
+Content-Type: application/json
+
+{
+    "base": 15,
+    "altura": 3
+}
+
+### PUT - ID Inválido
+PUT {{url}}/rectangulos/base-altura/cincuenta
+Content-Type: application/json
+
+{
+    "base": 10,
+    "altura": 10
+}
+
+### GET - Listado Completo
+GET {{url}}/rectangulos/muestra
