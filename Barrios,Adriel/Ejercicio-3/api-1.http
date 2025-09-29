@@ -1,9 +1,8 @@
-@url = http://localhost:1234
+@url = http://localhost:1234/alumnos
 
-# --- 1. CREAR REGISTRO (POST /notas) ---
+# --- CREAR REGISTRO (POST) ---
 
-# REGISTRO 1: Alumno A en Materia 1
-### POST - Registrar Notas (Juan Perez en Prog. IV)
+### POST - Registrar Notas
 POST {{url}}/notas
 Content-Type: application/json
 
@@ -16,7 +15,7 @@ Content-Type: application/json
 }
 
 # REGISTRO 2: Alumno B en Materia 2
-### POST - Registrar Notas (Maria Lopez en BBDD)
+### POST - Registrar Notas 
 POST {{url}}/notas
 Content-Type: application/json
 
@@ -28,8 +27,8 @@ Content-Type: application/json
     "note3": 8.0
 }
 
-# REGISTRO 3: Alumno A en Materia DIFERENTE (Debe pasar)
-### POST - Alumno en otra Materia (Juan Perez en Lab. IV)
+# REGISTRO 3: Alumno A en Materia DIFERENTE (pasa)
+### POST - Alumno en otra Materia 
 POST {{url}}/notas
 Content-Type: application/json
 
@@ -41,7 +40,7 @@ Content-Type: application/json
     "note3": 6.0
 }
 
-# Prueba de UNICIDAD: Intentar Alumno y Materia IGUAL (Debe fallar con 409 Conflict)
+
 ### POST - Intentar registro duplicado
 POST {{url}}/notas
 Content-Type: application/json
@@ -54,7 +53,6 @@ Content-Type: application/json
     "note3": 1.0
 }
 
-# Prueba de VALIDACIÓN: Datos inválidos (Debe fallar con 400 Bad Request)
 ### POST - Datos inválidos
 POST {{url}}/notas
 Content-Type: application/json
@@ -67,20 +65,13 @@ Content-Type: application/json
     "note3": 5
 }
 
+# --- CONSULTAR REGISTROS (GET) ---
 
----
-
-# --- 2. CONSULTAR REGISTROS (GET /notas) ---
-
-### GET - Listado Completo (Muestra nombre de materia y promedio calculado)
+### GET - Listado Completo (Muestra nombre de materia y promedio)
 GET {{url}}/notas
 
+# --- MODIFICAR REGISTRO (PUT) ---
 
----
-
-# --- 3. MODIFICAR REGISTRO (PUT /notas/:id) ---
-
-# Modificamos el Registro 1 (Juan P. en Prog. IV). Ajusta el ID si es necesario.
 ### PUT - Modificar Notas y Nombre
 PUT {{url}}/notas/1
 Content-Type: application/json
@@ -93,8 +84,8 @@ Content-Type: application/json
     "note3": 9.0
 }
 
-# Prueba de UNICIDAD en PUT: Intentar modificar el Registro 2 para que sea igual al Registro 3 (Debe fallar con 409 Conflict)
-### PUT - Conflicto de unicidad
+# Intentar modificar el Registro 2 para que sea igual al Registro 3 (devuelve 409 Conflict)
+### PUT - Conflicto
 PUT {{url}}/notas/2
 Content-Type: application/json
 

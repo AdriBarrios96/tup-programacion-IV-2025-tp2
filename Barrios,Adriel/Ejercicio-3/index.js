@@ -1,4 +1,3 @@
-// index.js
 import express from "express";
 import { conectarDB } from "./db.js";
 import alumnosRouter from "./alumnos.js";

@@ -1,7 +1,6 @@
-// validaciones.js
 import { param, body, validationResult } from "express-validator";
 
-// 1. Validaciones para el BODY (Alumnos y Notas)
+// Validaciones para el BODY
 export const validarAlumnoNotas = [
     body("alumno")
         .trim().notEmpty().isLength({ max: 50 }).withMessage('El nombre del alumno es requerido y debe tener hasta 50 caracteres.'),
@@ -15,11 +14,11 @@ export const validarAlumnoNotas = [
     body("note3").isFloat({ min: 1, max: 10 }).withMessage('Nota 3 debe ser un número entre 1 y 10.'),
 ];
 
-// 2. Validaciones para PARAM (ID)
+// Validaciones ID
 export const validarId = param("id").isInt({ min: 1 }).withMessage('El ID debe ser un número entero positivo.');
 
 
-// 3. Manejador de Errores (Middleware centralizado)
+// Manejo de Errores
 export const verificarValidaciones = (req, res, next) => {
     const validacion = validationResult(req);
     if (!validacion.isEmpty()) {

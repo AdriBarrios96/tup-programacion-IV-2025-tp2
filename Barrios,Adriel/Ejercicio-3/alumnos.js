@@ -1,13 +1,12 @@
-// alumnos.js
 import express from "express";
 import { db } from "./db.js";
 import { validarAlumnoNotas, validarId, verificarValidaciones } from "./validaciones.js";
 
 const router = express.Router();
 
-// ----------------------------------------------------------------------
-// POST: Crear nuevo registro
-// ----------------------------------------------------------------------
+//- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+// POST - Crear nuevo registro
+
 router.post(
     "/notas", 
     validarAlumnoNotas, 
@@ -16,35 +15,35 @@ router.post(
     
     const { alumno, id_materia, nota1, nota2, note3 } = req.body; 
 
-    // 1. Verificación de unicidad: (alumno + id_materia)
+    // Verificación
     const [existente] = await db.execute(
-        "SELECT id FROM alumnos WHERE alumno = ? AND id_materia = ?", 
+        `SELECT id FROM alumnos WHERE alumno = ? AND id_materia = ?`, 
         [alumno, id_materia]
     );
 
     if (existente.length > 0) {
         return res.status(409).json({ 
             success: false, 
-            message: "El alumno ya tiene notas registradas para esta materia." 
+            message: "El alumno ya tiene notas para esta materia." 
         });
     }
 
-    // 2. Inserción en la base de datos
-    const sql = `INSERT INTO alumnos (alumno, id_materia, nota1, nota2, note3) VALUES (?, ?, ?, ?, ?)`;
+    // Inserción en la base de datos
+    const sql = "INSERT INTO alumnos (alumno, id_materia, nota1, nota2, note3) VALUES (?, ?, ?, ?, ?)";
     const values = [alumno, id_materia, nota1, nota2, note3];
 
     const [result] = await db.execute(sql, values);
     
     res.status(201).json({ 
         success: true,
-        mensaje: "Notas registradas exitosamente.",
+        mensaje: "Notas registradas.",
         id: result.insertId
     });
 });
 
-// ----------------------------------------------------------------------
-// GET: Listar todos los registros (JOIN)
-// ----------------------------------------------------------------------
+//- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+// GET - Todos los registros
+
 router.get("/notas", async (req, res) => {
     
     const sql = 
@@ -64,9 +63,9 @@ router.get("/notas", async (req, res) => {
 
     const [rows] = await db.execute(sql);
 
-    // Mantenemos la lógica de promedio
+    // Promedio
     const datosConPromedio = rows.map(registro => {
-        // Usamos note3 para el cálculo
+        // Usamos note3
         const promedio = (registro.nota1 + registro.nota2 + registro.note3) / 3;
         return {
             ...registro,
@@ -78,9 +77,9 @@ router.get("/notas", async (req, res) => {
 });
 
 
-// ----------------------------------------------------------------------
-// PUT: Modificar un registro por ID
-// ----------------------------------------------------------------------
+//- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+// PUT - Modificar un registro por ID
+
 router.put(
     "/notas/:id", 
     validarId,      
@@ -90,7 +89,7 @@ router.put(
         const id = Number(req.params.id);
         const { alumno, id_materia, nota1, nota2, note3 } = req.body; 
 
-        // 1. Verificación de unicidad contra OTROS registros
+        // Verificamos contra OTROS registros
         const [existente] = await db.execute(
             "SELECT id FROM alumnos WHERE alumno = ? AND id_materia = ? AND id != ?", 
             [alumno, id_materia, id]
@@ -99,27 +98,26 @@ router.put(
         if (existente.length > 0) {
             return res.status(409).json({ 
                 success: false, 
-                message: "La combinación de Alumno y Materia ya existe en otro registro." 
+                message: "Alumno y Materia ya existe en otro registro." 
             });
         }
         
-        // 2. Actualización
+        // Actualización
         const sql = `
             UPDATE alumnos 
             SET alumno = ?, id_materia = ?, nota1 = ?, nota2 = ?, note3 = ? 
             WHERE id = ?`;
         
         const values = [alumno, id_materia, nota1, nota2, note3, id];
-
         const [result] = await db.execute(sql, values);
         
         if (result.affectedRows === 0) {
-            return res.status(404).json({ success: false, mensaje: "Registro de notas no encontrado." });
+            return res.status(404).json({ success: false, mensaje: "No se encontrado registro." });
         }
 
         res.status(200).json({ 
             success: true,
-            mensaje: "Notas modificadas exitosamente.",
+            mensaje: "Se modificaron las notas.",
             id: id
         });
     }
